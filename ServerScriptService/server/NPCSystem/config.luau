@@ -141,6 +141,7 @@ local config = {
 			jump = { id = "rbxasset://sounds/action_jump.mp3", volume = 0.7, speed = 1 },
 			land = { id = "rbxasset://sounds/action_jump_land.mp3", volume = 0.8, speed = 1 },
 		},
+		speedResolver = nil :: ((Player, string, number) -> number?)?,
 	},
 
 	stateMachine = {

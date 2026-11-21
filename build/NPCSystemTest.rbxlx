@@ -8830,6 +8830,7 @@ local config = {
 			jump = { id = "rbxasset://sounds/action_jump.mp3", volume = 0.7, speed = 1 },
 			land = { id = "rbxasset://sounds/action_jump_land.mp3", volume = 0.8, speed = 1 },
 		},
+		speedResolver = nil :: ((Player, string, number) -&gt; number?)?,
 	},
 
 	stateMachine = {
@@ -9089,6 +9090,7 @@ function Validator.validateGlobal(config): { string }
 				end
 			end
 		end
+		checkOptionalFunction(errors, "config.movement.speedResolver", mv.speedResolver)
 	end
 	local gp = config.gap
 	if type(gp) == "table" then
@@ -11587,7 +11589,17 @@ function MovementService.start(config, emitNoise: (Vector3, number, string) -&gt
 				if not airborne then
 					local mode = if st.sprint then "sprint" elseif st.sneak then "sneak" else "walk"
 					st.groundMode = mode
-					hum.WalkSpeed = cfg.speeds[mode]
+					local speed = cfg.speeds[mode]
+					local resolver = cfg.speedResolver
+					if resolver then
+						local ok, custom = pcall(resolver, player, mode, speed)
+						if not ok then
+							warn("[NPCSystem] movement.speedResolver failed: " .. tostring(custom))
+						elseif type(custom) == "number" and custom == custom and custom &gt;= 0 and custom &lt; math.huge then
+							speed = custom
+						end
+					end
+					hum.WalkSpeed = speed
 
 					local pos = hrp.Position
 					if hum.MoveDirection.Magnitude &gt; 0.1 and st.lastPos then

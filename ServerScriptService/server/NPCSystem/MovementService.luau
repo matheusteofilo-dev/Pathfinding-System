@@ -120,7 +120,17 @@ function MovementService.start(config, emitNoise: (Vector3, number, string) -> (
 				if not airborne then
 					local mode = if st.sprint then "sprint" elseif st.sneak then "sneak" else "walk"
 					st.groundMode = mode
-					hum.WalkSpeed = cfg.speeds[mode]
+					local speed = cfg.speeds[mode]
+					local resolver = cfg.speedResolver
+					if resolver then
+						local ok, custom = pcall(resolver, player, mode, speed)
+						if not ok then
+							warn("[NPCSystem] movement.speedResolver failed: " .. tostring(custom))
+						elseif type(custom) == "number" and custom == custom and custom >= 0 and custom < math.huge then
+							speed = custom
+						end
+					end
+					hum.WalkSpeed = speed
 
 					local pos = hrp.Position
 					if hum.MoveDirection.Magnitude > 0.1 and st.lastPos then

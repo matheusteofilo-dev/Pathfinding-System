@@ -273,6 +273,7 @@ Player movement: sprint, sneak, and the noise and footstep sounds they make. Run
 | `minLandFallTime` | `0.3` | `>= 0` | Seconds in the air for a landing to make noise. |
 | `soundMaxDistance` | `80` | `>= 1` | Maximum distance at which the footstep sounds can be heard. |
 | `sounds` | see below | each with a string `id` | The sound played for each action. |
+| `speedResolver` | `nil` | function or `nil` | Optional `(player, mode, speed) -> number?`. Called every frame the player is on the ground, with the mode (`walk`, `sprint`, `sneak`) and the speed from `speeds`. Return a number to use it as `WalkSpeed` instead, or `nil` to keep the default. Lets another system (for example a combat system) slow the player down while blocking or stunned, or scale speed with player stats. |
 
 Each entry in `sounds` is `{ id = "rbxasset://...", volume = number, speed = number }`: the sound id, the volume (`>= 0`) and the playback speed (`> 0`). The defaults use the sounds that come with Roblox:
 

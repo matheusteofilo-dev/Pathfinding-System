@@ -171,6 +171,7 @@ function Validator.validateGlobal(config): { string }
 				end
 			end
 		end
+		checkOptionalFunction(errors, "config.movement.speedResolver", mv.speedResolver)
 	end
 	local gp = config.gap
 	if type(gp) == "table" then
